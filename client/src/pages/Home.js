@@ -52,7 +52,6 @@ const Home = () => {
             <hr/>
             {user}
             <button className="btn btn-primary" onClick={updateUserName}>Change user name</button>
-            {JSON.stringify(history)}
         </div>
     )
 }

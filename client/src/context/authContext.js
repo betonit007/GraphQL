@@ -46,5 +46,6 @@ const AuthProvider = ({ children }) => { //takes children component and return i
         </AuthContext.Provider>
     )
 }
+
 //export
 export { AuthContext, AuthProvider }
