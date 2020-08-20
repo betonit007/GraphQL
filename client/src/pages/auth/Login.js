@@ -28,7 +28,7 @@ const Login = () => {
 
     return (
             <div className="container">
-                <div className="row">
+                <div className="row m-2">
                     {loading ? <h4 className='text-warning'>Loading....</h4>:<h4>Login</h4>}
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">

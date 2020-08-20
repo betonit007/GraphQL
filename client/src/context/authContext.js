@@ -1,9 +1,11 @@
 import React, { useReducer, createContext } from 'react';
+import { auth } from '../firebase/firebase.utils'
 
 //reducer 
 const firebaseReducer = (state, action) => {
     switch (action.type) {
         case "LOGGED_IN_USER":
+            console.log(action.payload)
             return { ...state, user: action.payload }
 
         default:
@@ -34,12 +36,31 @@ const AuthProvider = ({ children }) => { //takes children component and return i
         })
     }
 
+    const completeUserRegistration = async (password) => {
+        localStorage.removeItem("emailFormRegistration")
+        await auth.currentUser.updatePassword(password)
+        const idTokenResult = await auth.currentUser.getIdTokenResult()
+
+        const userInfo = {
+            email: auth.currentUser.email,
+            token: idTokenResult.token
+        }
+        
+        dispatch({
+            type: 'LOGGED_IN_USER',
+            payload: userInfo
+        })
+        //make api request to save/update user in mongodb
+        
+    }
+
     return (
         <AuthContext.Provider
             value={
                 {
                     user: state.user,
-                    updateUserName
+                    updateUserName,
+                    completeUserRegistration
                 }
             }>
             {children}

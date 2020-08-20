@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import Home from './pages/Home'
 import Navbar from './components/Navbar'
 import Register from './pages/auth/Register'
+import CompleteRegistration from './pages/auth/CompleteRegistration'
 import Login from './pages/auth/Login'
 import { Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
@@ -21,12 +22,13 @@ const App = () => {
             <Navbar />
             <ToastContainer
                 position="top-center"
-                autoClose={4000}
+                autoClose={5000}
             />
             <Switch >
                 <Home exact path="/" component={Home} />
                 <Route exact path='/register' component={Register} />
                 <Route exact path='/login' component={Login} />
+                <Route exact path='/complete-registration' component={CompleteRegistration} />
             </Switch>
         </ApolloProvider>
     )

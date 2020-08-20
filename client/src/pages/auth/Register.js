@@ -20,7 +20,7 @@ const Register = () => {
         window.localStorage.setItem('emailFormRegistration', email)
         setEmail("")
         setLoading(false)
-        toast.info("wow that was easy!")
+        toast.info("Registration request sent. Please check your email for link to finalize registration")
     }
 
     return (

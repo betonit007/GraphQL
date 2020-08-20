@@ -49,9 +49,9 @@ const Home = () => {
                 <hr />
                 <button onClick={() => fetchPosts()} className='btn btn-primary'>Fetch Posts</button>
             </div>
-            <hr/>
+            {/* <hr/>
             {user}
-            <button className="btn btn-primary" onClick={updateUserName}>Change user name</button>
+            <button className="btn btn-primary" onClick={updateUserName}>Change user name</button> */}
         </div>
     )
 }

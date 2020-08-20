@@ -2,6 +2,10 @@
     --color-text: black;
     --color-background:#b7e1ff;;
   }
+  
+body {
+  background: whitesmoke
+}
 
 .theme-bg {
   background: var(--color-background);
