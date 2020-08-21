@@ -1,11 +1,10 @@
-import React, { useReducer, createContext } from 'react';
+import React, { useReducer, createContext, useEffect } from 'react';
 import { auth } from '../firebase/firebase.utils'
 
 //reducer 
 const firebaseReducer = (state, action) => {
     switch (action.type) {
         case "LOGGED_IN_USER":
-            console.log(action.payload)
             return { ...state, user: action.payload }
 
         default:
@@ -19,6 +18,27 @@ const AuthContext = createContext()
 //context provider
 const AuthProvider = ({ children }) => { //takes children component and return it with the authContext
 
+    //listen / check for current user
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(async user => {
+            if (user) {
+                const idTokenResult = await auth.currentUser.getIdTokenResult()
+
+                dispatch({
+                    type: "LOGGED_IN_USER",
+                    payload: { email: user.email, token: idTokenResult.token }
+                })
+            } else {
+                dispatch({
+                    type: 'LOGGED_IN_USER',
+                    payload: null
+                })
+            }
+        })
+        //clean up
+        return () => unsubscribe()
+    }, [])
+
     //state
     const initalState = {
         user: null,
@@ -29,13 +49,6 @@ const AuthProvider = ({ children }) => { //takes children component and return i
 
 
     //functions
-    const updateUserName = () => {
-        dispatch({
-            type: "LOGGED_IN_USER",
-            payload: "Tim"
-        })
-    }
-
     const completeUserRegistration = async (password) => {
         localStorage.removeItem("emailFormRegistration")
         await auth.currentUser.updatePassword(password)
@@ -45,13 +58,28 @@ const AuthProvider = ({ children }) => { //takes children component and return i
             email: auth.currentUser.email,
             token: idTokenResult.token
         }
-        
+
         dispatch({
             type: 'LOGGED_IN_USER',
             payload: userInfo
         })
         //make api request to save/update user in mongodb
-        
+
+    }
+
+    const logout = () => {
+        auth.signOut();
+        dispatch({
+            type: 'LOGGED_IN_USER',
+            payload: null
+        })
+    }
+
+    const login = (user, token) => {
+        dispatch({ 
+            type: 'LOGGED_IN_USER',
+            payload: {user, token}
+        })
     }
 
     return (
@@ -59,8 +87,9 @@ const AuthProvider = ({ children }) => { //takes children component and return i
             value={
                 {
                     user: state.user,
-                    updateUserName,
-                    completeUserRegistration
+                    completeUserRegistration,
+                    logout,
+                    login
                 }
             }>
             {children}
