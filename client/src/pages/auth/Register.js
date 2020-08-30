@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { auth } from '../../firebase/firebase.utils'
 import { toast } from 'react-toastify';
+import AuthForm from '../../components/forms/AuthForm'
 
 const Register = () => {
 
@@ -33,19 +34,12 @@ const Register = () => {
                     :
                     <h4>Register</h4>
                 }
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            type="email"
-                            className='form-control'
-                            placeholder="Enter Email"
-                            disabled={loading}
-                        />
-                    </div>
-                    <button className="btn btn-raised theme-bg mt-2" disabled={!email || loading}>Submit</button>
-                </form>
+                <AuthForm 
+                  email={email}
+                  loading={loading}
+                  setEmail={setEmail}
+                  handleSubmit={handleSubmit}
+                />
             </div>
         </div>
     )

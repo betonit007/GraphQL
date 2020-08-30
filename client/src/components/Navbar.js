@@ -7,7 +7,7 @@ const Navbar = () => {
 
   const { user, logout } = useContext(AuthContext)
   let history = useHistory()
-
+  console.log(user)
   return (
     <nav className="navbar navbar-expand-lg navbar-light pl-2 theme-bg">
       <Link to="/" className="navbar-brand">GraphQL</Link>
@@ -17,28 +17,34 @@ const Navbar = () => {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
+          {user && 
+            <li className="nav-item active d-flex align-items-center">
+            <Link className="nav-link" to="/profile">{user.email && user.email.split("@")[0]}</Link>
+          </li>
+          }
           {!user &&
             <>
-              <li className="nav-item active">
-                <Link className="nav-link" to="/login">Login<span className="sr-only">(current)</span></Link>
+              <li className="nav-item active d-flex align-items-center">
+                <Link className="nav-link d-flex align-items-center" to="/login">Login</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to='/register'>Register</Link>
+                <Link className="nav-link d-flex align-items-center" to='/register'>Register</Link>
               </li>
             </>
           }
           {user &&
             <li
-              className="nav-item"
+              className="nav-item d-flex align-items-center"
               style={{ cursor: "pointer" }}
             >
-              <p
+              <p className='d-flex align-items-center m-2'
                 onClick={() => {
                   logout()
                   history.push('/login')
                 }
                 }
-                className="nav-link">Logout</p>
+              >Logout
+              </p>
             </li>
           }
         </ul>

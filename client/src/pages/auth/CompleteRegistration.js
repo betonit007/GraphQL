@@ -3,6 +3,18 @@ import { auth } from '../../firebase/firebase.utils'
 import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { AuthContext } from '../../context/authContext'
+import { useMutation } from '@apollo/react-hooks'
+import {gql} from 'apollo-boost'
+import AuthForm from '../../components/forms/AuthForm'
+
+const USER_CREATE = gql`
+ mutation userCreate {
+     userCreate {
+         username
+         email
+     }
+  }
+`
 
 const CompleteRegistration = () => {
 
@@ -27,7 +39,8 @@ const CompleteRegistration = () => {
             const result = await auth.signInWithEmailLink(email, window.location.href)
             if(result.user.emailVerified) {
                 completeUserRegistration(password)
-                history.push('/')
+                userCreate()
+                history.push('/profile')
             }
              
         } catch (err) {
@@ -36,12 +49,14 @@ const CompleteRegistration = () => {
             toast.error(err.message)
         }
     }
-
+   
     let history = useHistory()
 
     useEffect(() => {
       setEmail(localStorage.getItem("emailFormRegistration"))
     }, [history])
+
+    const [userCreate] = useMutation(USER_CREATE)
 
     return (
 
@@ -54,27 +69,15 @@ const CompleteRegistration = () => {
                     :
                     <h4>Complete Registration</h4>
                 }
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            type="email"
-                            className='form-control mb-2'
-                            placeholder="Enter Email"
-                            disabled
-                        />
-                        <input
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            type="password"
-                            className='form-control'
-                            placeholder="Enter Password"
-                            disabled={loading}
-                        />
-                    </div>
-                    <button className="btn btn-raised theme-bg mt-2" disabled={!email || loading}>Submit</button>
-                </form>
+                <AuthForm 
+                  email={email}
+                  setEmail={setEmail}
+                  password={password}
+                  setPassword={setPassword}
+                  loading={loading}
+                  handleSubmit={handleSubmit}
+                  showPasswordInput={true}
+                />
             </div>
         </div>
     )

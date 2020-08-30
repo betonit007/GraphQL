@@ -3,6 +3,18 @@ import { auth, gProvider } from '../../firebase/firebase.utils'
 import { AuthContext } from '../../context/authContext'
 import { Link, useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { useMutation } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
+import AuthForm from '../../components/forms/AuthForm'
+
+const USER_CREATE = gql`
+ mutation userCreate {
+     userCreate {
+         username
+         email
+     }
+  }
+`
 
 const Login = () => {
 
@@ -13,6 +25,8 @@ const Login = () => {
     const { login } = useContext(AuthContext)
 
     let history = useHistory()
+
+    const [userCreate] = useMutation(USER_CREATE)
 
     const handleSubmit = async e => {
         e.preventDefault()
@@ -29,7 +43,8 @@ const Login = () => {
         }
 
         //send user info to our server (mongoDB)
-        history.push('/')
+        userCreate()
+        history.push('/profile')
     }
 
     const googleLogin = async () => {
@@ -37,45 +52,35 @@ const Login = () => {
             const { user } = await auth.signInWithPopup(gProvider)
             const idTokenResult = await user.getIdTokenResult()
             login(user.email, idTokenResult.token)
-            history.push('/')
-            
+            userCreate()
+            history.push('/profile')
+
         } catch (error) {
             console.log(error)
             toast.error(error)
         }
-       
+
     }
 
     return (
         <div className="container">
             <div className="row m-2">
                 {loading ? <h4 className='text-warning'>Loading....</h4> : <h4>Login</h4>}
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            type="email"
-                            className='form-control'
-                            placeholder="Enter Email"
-                            disabled={loading}
-                        />
-                        <input
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            type="password"
-                            className='form-control mt-2'
-                            placeholder="Enter Password"
-                            disabled={loading}
-                        />
-                    </div>
-                    <button className="btn btn-raised theme-bg mt-2" disabled={!email || loading || !password}>Submit</button>
-                </form>
+                <AuthForm
+                    email={email}
+                    setEmail={setEmail}
+                    password={password}
+                    setPassword={setPassword}
+                    loading={loading}
+                    handleSubmit={handleSubmit}
+                    showPasswordInput={true}
+                />
             </div>
             <div className="d-flex flex-column align-items-center">
                 <p className='text-center'>Or Login with Google</p>
-                <button onClick={googleLogin} style={{width: "150px"}} className="btn btn-danger"><i className='fa fa-google'></i> Signin</button>
+                <button onClick={googleLogin} style={{ width: "150px" }} className="btn btn-danger"><i className='fa fa-google'></i> Signin</button>
             </div>
+            <Link className="text-danger float-right" to='/password/forgot'>Forgot Password</Link>
         </div>
     )
 }

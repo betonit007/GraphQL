@@ -30,7 +30,7 @@ const Home = () => {
     return (
         <div className='container p-5'>
             <div className='row p-5'>
-                {data.allPosts.map(post => (
+                {data && data.allPosts.map(post => (
                     <div className="col-md-4" key={post.id}>
                         <div className="card">
                             <div className="card-body">
